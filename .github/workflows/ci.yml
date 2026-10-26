@@ -38,7 +38,7 @@ jobs:
       # Step-4: Run tests
       - name: Run tests
         run: |
-          pytest
+          python -m pytest
       # Step-5: Build the Docker image
       - name: Build Docker image
         run: docker build -t iris-ml-api:${{github.sha}} . #sha creates a unique id for each commit, i.e starting prefix will be same but the version will be different for each commit (of our image)
