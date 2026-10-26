@@ -1,0 +1,44 @@
+# Github Actions CI pipeline for Iris ML API
+name: Iris ML API - CI Pipeline - CSE
+
+# Define when Github should run this workflow
+on:
+# Run CI whenever code is pushed to main branch
+  push:
+    branches: 
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+# permissions are restricted to read repo content
+permissions:
+  contents: read
+
+# Define the jobs that make up the pipeline
+jobs:
+  test-and-build:
+    # Github rep provides a fresh Ubuntu virtual environment for each job
+    runs-on: ubuntu-latest
+    steps:
+      # Step-1: Download the repo content to the runner
+      - name: Check out repository
+        uses: actions/checkout@v4
+      # Step-2: Install Python on the runner    
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.14"
+      # Step-3: Install dependencies
+      - name: Install python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      # Step-4: Run tests
+      - name: Run tests
+        run: |
+          pytest
+      # Step-5: Build the Docker image
+      - name: Build Docker image
+        run: docker build -t iris-ml-api:#{{github.sha}} #sha creates a unique id for each commit, i.e starting prefix will be same but the version will be different for each commit (of our image)
